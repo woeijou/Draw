@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI靈籤</title>
+</head>
+<body style="margin: 0; padding: 0;">
+  <div class="container-fluid p-0 m-0" style="position:relative; width:100vw; height:100vh; overflow:hidden;">
+    <img src="images/AI.gif" alt="Placeholder Image" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;">
+  </div>
+</body>
+<script type="text/javascript">
+    // 建立轉場動畫與覆蓋層樣式
+    var style = document.createElement('style');
+    style.innerHTML = `
+        .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #000;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+        @keyframes overlayFadeIn {
+            to { opacity: 1; }
+        }
+        @keyframes overlayFadeOut {
+            to { opacity: 0; }
+        }
+        .overlay.fade-in {
+            animation: overlayFadeIn 0.5s ease-in-out forwards;
+        }
+        .overlay.fade-out {
+            animation: overlayFadeOut 0.5s ease-in-out forwards;
+        }
+        @keyframes imageShrink {
+            to { transform: scale(0.5); }
+        }
+        @keyframes imageExpand {
+            from { transform: scale(0.5); }
+            to { transform: scale(1); }
+        }
+        img.shrink {
+            animation: imageShrink 0.5s ease-in-out forwards;
+        }
+        img.expand {
+            animation: imageExpand 0.5s ease-in-out forwards;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // 建立覆蓋層
+    var overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    document.body.appendChild(overlay);
+
+    var image = document.querySelector('img');
+    function onClick() {
+        // 啟動淡入與縮小
+        overlay.classList.add('fade-in');
+        image.classList.add('shrink');
+
+        // 0.5s 後交換圖片並還原
+        setTimeout(function() {
+            // 換圖
+            var randomNumber = Math.floor(Math.random() * 23);
+            var imageUrl = 'images/AI/' + ('000' + randomNumber).slice(-3) + '.png';
+            image.src = imageUrl;
+
+            // 開始淡出與放大
+            overlay.classList.remove('fade-in');
+            overlay.classList.add('fade-out');
+            image.classList.remove('shrink');
+            image.classList.add('expand');
+
+            // 0.5s 後清除類別、註銷事件
+            setTimeout(function() {
+                overlay.classList.remove('fade-out');
+                image.classList.remove('expand');
+                image.removeEventListener('click', onClick);
+            }, 500);
+        }, 500);
+    }
+
+    // 首次監聽
+    image.addEventListener('click', onClick, { once: true });
+</script>
+</html>
